@@ -17,7 +17,6 @@ import { RevenueStreamWidget } from './components/revenuestreamwidget';
             </div>
             <div class="col-span-12 xl:col-span-6">
                 <app-revenue-stream-widget />
-                <app-notifications-widget />
             </div>
         </div>
     `

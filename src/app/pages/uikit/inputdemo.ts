@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Form, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -28,8 +28,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { CountryService } from '../service/country.service';
 import { NodeService } from '../service/node.service';
-import { TreeNode } from 'primeng/api';
+import { MessageService, TreeNode } from 'primeng/api';
 import { Country } from '../service/customer.service';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
     selector: 'app-input-demo',
@@ -61,9 +63,83 @@ import { Country } from '../service/customer.service';
         MultiSelectModule,
         ListboxModule,
         InputGroupAddonModule,
-        TextareaModule
+        TextareaModule,
+        FileUploadModule,
+        ToastModule,
+        ReactiveFormsModule
     ],
-    template: ` <p-fluid class="flex flex-col md:flex-row gap-8">
+    template: `
+
+    <p-toast />
+
+    <form   [formGroup]="form!" action="">
+        <p-fluid class="flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/2">
+                <div class="card flex flex-col gap-4">
+                    <div class="font-semibold text-xl">Nome/Número</div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input pInputText type="text" placeholder="Nome ou numero do animal" class="w-4" formControlName="nome_numero"/>
+                    </div>
+
+                    <div class="col-span-full lg:col-span-6">
+                        <div class="card">
+                            <div class="font-semibold text-xl mb-4">Imagem</div>
+                            <div class="flex flex-col gap-4 items-center justify-center">
+                                <p-fileupload #fu mode="basic" name="file[]" [multiple]="false" chooseLabel="Choose" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="10000000" (onSelect)="onUpload($event)" />
+                            </div>
+                        </div>
+                        <div class="font-semibold text-xl mb-4">Raça</div>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex items-center">
+                                <p-radiobutton id="option1"  value="Nelore" [(ngModel)]="radioValue" formControlName="raca" />
+                                <label for="option1" class="leading-none ml-2">Nelore</label>
+                            </div>
+                            <div class="flex items-center">
+                                <p-radiobutton id="option2"  value="Cruzado" [(ngModel)]="radioValue" formControlName="raca"/>
+                                <label for="option2" class="leading-none ml-2">Cruzado</label>
+                            </div>
+                            <div class="flex items-center">
+                                <p-radiobutton id="option3"  value="Angus" [(ngModel)]="radioValue" formControlName="raca"/>
+                                <label for="option3" class="leading-none ml-2">Angus</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-semibold text-xl mb-4">Sexo</div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex items-center">
+                            <p-radiobutton id="optionMacho" value="Macho" [(ngModel)]="radioValue" formControlName="sexo"/>
+                            <label for="optionMacho" class="leading-none ml-2">Macho</label>
+                        </div>
+                        <div class="flex items-center">
+                            <p-radiobutton id="optionFemea" value="Fêmea"  [(ngModel)]="radioValue" formControlName="sexo"/>
+                            <label for="optionFemea" class="leading-none ml-2">Fêmea</label>
+                        </div>
+                    </div>
+                    <div class="font-semibold text-xl">Tipo</div>
+                    <p-select formControlName="tipo" [options]="dropdownValues" optionLabel="name" placeholder="Selecione" />
+
+                    <p-button (onClick)="verdados()">Salva</p-button>
+                </div>
+
+            </div>
+
+
+
+            <div class="md:w-1/2">
+                <div class="card flex flex-col gap-4">
+                    <div class="font-semibold text-xl">Data de nascimento</div>
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" formControlName="data_nascimento"></p-datepicker>
+                </div>
+            </div>
+        </p-fluid>
+    </form>
+
+
+
+<!--
+dsadsdadsd -->
+
+        <p-fluid class="flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2">
                 <div class="card flex flex-col gap-4">
                     <div class="font-semibold text-xl">InputText</div>
@@ -235,9 +311,26 @@ import { Country } from '../service/customer.service';
                 </div>
             </div>
         </p-fluid>`,
-    providers: [CountryService, NodeService]
+    providers: [CountryService, NodeService, MessageService]
 })
+
+
+
 export class InputDemo implements OnInit {
+
+    protected form?: FormGroup<{
+        nome_numero: FormControl<string | null>;
+        sexo: FormControl<string | null>;
+        raca: FormControl<string | null>;
+        tipo: FormControl<string | null>;
+        file: FormControl<File | null>;
+        data_nascimento: FormControl<Date | null>;
+        peso: FormControl<number | null>;
+        preco: FormControl<number | null>;
+    }>;
+
+    uploadedFiles: any[] = [];
+
     floatValue: any = null;
 
     autoValue: any[] | undefined;
@@ -273,11 +366,11 @@ export class InputDemo implements OnInit {
     listboxValue: any = null;
 
     dropdownValues = [
-        { name: 'New York', code: 'NY' },
-        { name: 'Rome', code: 'RM' },
-        { name: 'London', code: 'LDN' },
-        { name: 'Istanbul', code: 'IST' },
-        { name: 'Paris', code: 'PRS' }
+        { name: 'Boi', code: 'B' },
+        { name: 'Vaca', code: 'V' },
+        { name: 'Novilha', code: 'N' },
+        { name: 'Bezzero(a)', code: 'B' },
+        { name: 'Garrote', code: 'G' }
     ];
 
     dropdownValue: any = null;
@@ -315,12 +408,30 @@ export class InputDemo implements OnInit {
 
     nodeService = inject(NodeService);
 
+    formBuilderService = inject(FormBuilder);
+
+    constructor(private messageService: MessageService) { }
+
+
     ngOnInit() {
         this.countryService.getCountries().then((countries) => {
             this.autoValue = countries;
         });
 
         this.nodeService.getFiles().then((data) => (this.treeSelectNodes = data));
+
+        this.form = this.formBuilderService.group({
+            nome_numero: ['', Validators.required],
+            sexo: ['', Validators.required],
+            raca: ['', Validators.required],
+            tipo: ['', Validators.required],
+            // dataNascimento: [new Date(), Validators.required],
+            file: new FormControl<File | null> (null, Validators.required),
+            data_nascimento: new FormControl<Date | null> (null, Validators.required),
+            peso: [0, Validators.required],
+            preco:  [0, Validators.required],
+        })
+
     }
 
     filterCountry(event: AutoCompleteCompleteEvent) {
@@ -335,5 +446,18 @@ export class InputDemo implements OnInit {
         }
 
         this.autoFilteredValue = filtered;
+    }
+
+
+    onUpload(event: any) {
+
+        const file = event.files[0];
+        this.form?.controls.file.setValue(file);
+
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+    }
+
+    verdados(){
+        console.log(this.form?.value)
     }
 }
