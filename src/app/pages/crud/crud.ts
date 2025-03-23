@@ -18,7 +18,7 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { Product, ProductService } from '../service/product.service';
+import { Animal, Product, ProductService } from '../service/product.service';
 
 interface Column {
     field: string;
@@ -57,7 +57,6 @@ interface ExportColumn {
     template: `
         <p-toolbar styleClass="mb-6">
             <ng-template #start>
-                <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
                 <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
             </ng-template>
 
@@ -66,9 +65,11 @@ interface ExportColumn {
             </ng-template>
         </p-toolbar>
 
+
+
         <p-table
             #dt
-            [value]="products()"
+            [value]="animais()"
             [rows]="10"
             [columns]="cols"
             [paginator]="true"
@@ -83,7 +84,7 @@ interface ExportColumn {
         >
             <ng-template #caption>
                 <div class="flex items-center justify-between">
-                    <h5 class="m-0">Manage Products</h5>
+                    <h5 class="m-0">Gerenciar Animais</h5>
                     <p-iconfield>
                         <p-inputicon styleClass="pi pi-search" />
                         <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
@@ -96,55 +97,72 @@ interface ExportColumn {
                         <p-tableHeaderCheckbox />
                     </th>
                     <th style="min-width: 16rem">Code</th>
-                    <th pSortableColumn="name" style="min-width:16rem">
-                        Name
-                        <p-sortIcon field="name" />
+                    <th pSortableColumn="nome_numero" style="min-width:16rem">
+                        Nome/Numero
+                        <p-sortIcon field="nome_numero" />
                     </th>
-                    <th>Image</th>
-                    <th pSortableColumn="price" style="min-width: 8rem">
-                        Price
-                        <p-sortIcon field="price" />
+                    <th>Imagem</th>
+                    <th pSortableColumn="preco" style="min-width: 8rem">
+                        Preço
+                        <p-sortIcon field="preco" />
                     </th>
-                    <th pSortableColumn="category" style="min-width:10rem">
-                        Category
-                        <p-sortIcon field="category" />
+                    <th pSortableColumn="raca" style="min-width: 8rem">
+                        Peso
+                        <p-sortIcon field="raca" />
                     </th>
-                    <th pSortableColumn="rating" style="min-width: 12rem">
-                        Reviews
-                        <p-sortIcon field="rating" />
+                    <th pSortableColumn="raca" style="min-width:10rem">
+                        Raça
+                        <p-sortIcon field="raca" />
                     </th>
-                    <th pSortableColumn="inventoryStatus" style="min-width: 12rem">
-                        Status
-                        <p-sortIcon field="inventoryStatus" />
+
+                    <th pSortableColumn="sexo" style="min-width: 8rem">
+                        Sexo
+                        <p-sortIcon field="sexo" />
+                    </th>
+                    <th pSortableColumn="tipo" style="min-width: 12rem">
+                        Tipo
+                        <p-sortIcon field="tipo" />
+                    </th>
+                    <th pSortableColumn="data_nascimento" style="min-width: 12rem">
+                        Data de Nascimento
+                        <p-sortIcon field="data_nascimento" />
                     </th>
                     <th style="min-width: 12rem"></th>
                 </tr>
             </ng-template>
-            <ng-template #body let-product>
+            <ng-template #body let-animal>
                 <tr>
                     <td style="width: 3rem">
-                        <p-tableCheckbox [value]="product" />
+                        <p-tableCheckbox [value]="animal" />
                     </td>
-                    <td style="min-width: 12rem">{{ product.code }}</td>
-                    <td style="min-width: 16rem">{{ product.name }}</td>
+                    <td style="min-width: 12rem">{{ animal.id }}</td>
+                    <td style="min-width: 16rem">{{ animal.nome_numero }}</td>
                     <td>
-                        <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.name" style="width: 64px" class="rounded" />
+                        <img [src]="getUrlImage(animal.file)" [alt]="animal.nome_numero" style="width: 64px" class="rounded" />
                     </td>
-                    <td>{{ product.price | currency: 'USD' }}</td>
-                    <td>{{ product.category }}</td>
+                    <td>{{ animal.preco | currency: 'RS' }}</td>
+                    <td>{{ animal.peso | currency: 'RS' }}</td>
+                    <td>{{ animal.raca }}</td>
                     <td>
-                        <p-rating [(ngModel)]="product.rating" [readonly]="true" />
-                    </td>
-                    <td>
-                        <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" />
+                         <p-tag [value]="animal.sexo" [severity]="getSeverity(animal.sexo)"></p-tag>
                     </td>
                     <td>
-                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
-                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />
+                        {{ animal.tipo.code }}
+                    </td>
+                    <td>
+                        {{animal.data_nascimento}}
+                    </td>
+                    <td>
+                        <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(animal)" />
+                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(animal)" />
                     </td>
                 </tr>
             </ng-template>
         </p-table>
+
+
+
+
 
         <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true">
             <ng-template #content>
@@ -215,6 +233,8 @@ export class Crud implements OnInit {
 
     products = signal<Product[]>([]);
 
+    animais = signal<Animal[]>([]);
+
     product!: Product;
 
     selectedProducts!: Product[] | null;
@@ -243,7 +263,44 @@ export class Crud implements OnInit {
         this.loadDemoData();
     }
 
-    loadDemoData() {
+    async carregarImagemParaFile(caminho: string, nomeArquivo: string): Promise<File> {
+        const resposta = await fetch(caminho);
+        const blob = await resposta.blob();
+        const arquivo = new File([blob], nomeArquivo, { type: blob.type });
+        return arquivo;
+    }
+
+    getUrlImage(imagem: any){
+
+        if(imagem.size){
+            return URL.createObjectURL(imagem);
+        }else{
+            return imagem.objectURL;
+        }
+
+        //
+
+    }
+
+    async loadDemoData() {
+
+        this.animais.set(this.productService.getAnimalsDataLocal());
+
+        this.animais().forEach(item => {
+            let num = Math.random() < 0.5 ? 1 : 2;
+            if (item.file === undefined) {
+              this.carregarImagemParaFile(`../../../assets/img/bezerro-${num}.png`,'teste.png').then(
+                (data)=>{
+                    item.file = data;
+                }
+              )
+            }
+        });
+
+        console.log(this.animais());
+
+
+
         this.productService.getProducts().then((data) => {
             this.products.set(data);
         });
@@ -281,12 +338,16 @@ export class Crud implements OnInit {
     }
 
     deleteSelectedProducts() {
+
+
+        console.log(this.selectedProducts)
+
         this.confirmationService.confirm({
             message: 'Are you sure you want to delete the selected products?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.products.set(this.products().filter((val) => !this.selectedProducts?.includes(val)));
+                this.animais.set(this.animais().filter((val) => !this.selectedProducts?.includes(val)));
                 this.selectedProducts = null;
                 this.messageService.add({
                     severity: 'success',
@@ -350,6 +411,17 @@ export class Crud implements OnInit {
                 return 'warn';
             case 'OUTOFSTOCK':
                 return 'danger';
+            default:
+                return 'info';
+        }
+    }
+
+    getSeverityAnimal(sexo: string) {
+        switch (sexo) {
+            case 'Macho':
+                return 'success';
+            case 'Femêa':
+                return 'warn';
             default:
                 return 'info';
         }

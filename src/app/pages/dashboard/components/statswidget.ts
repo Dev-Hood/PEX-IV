@@ -10,10 +10,10 @@ import { CommonModule } from '@angular/common';
                 <div class="flex justify-between mb-4">
                     <div>
                         <span class="block text-muted-color font-medium mb-4">Quantidade Registrados</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152</div>
+                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">10</div>
                     </div>
                     <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-blue-500 !text-xl"></i>
+                        <i class="pi pi-calculator text-blue-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-muted-color">Quantidade total de animais da fazenda</span>
@@ -38,10 +38,10 @@ import { CommonModule } from '@angular/common';
                 <div class="flex justify-between mb-4">
                     <div>
                         <span class="block text-muted-color font-medium mb-4">Fêmeas</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
+                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">5</div>
                     </div>
                     <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-users text-cyan-500 !text-xl"></i>
+                        <i class="pi pi-venus text-cyan-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-muted-color">Quatidade de animais fêmeas registradas</span>
@@ -52,10 +52,10 @@ import { CommonModule } from '@angular/common';
                 <div class="flex justify-between mb-4">
                     <div>
                         <span class="block text-muted-color font-medium mb-4">Machos</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">152 Unread</div>
+                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">5</div>
                     </div>
                     <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-comment text-purple-500 !text-xl"></i>
+                        <i class="pi pi-mars text-purple-500 !text-xl"></i>
                     </div>
                 </div>
                 <span class="text-muted-color">Quatidade de animais Machos registradas</span>

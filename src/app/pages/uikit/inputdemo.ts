@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
@@ -28,10 +28,11 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { CountryService } from '../service/country.service';
 import { NodeService } from '../service/node.service';
-import { MessageService, TreeNode } from 'primeng/api';
+import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 import { Country } from '../service/customer.service';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
+import { Animal, ProductService } from '../service/product.service';
 
 @Component({
     selector: 'app-input-demo',
@@ -82,24 +83,24 @@ import { ToastModule } from 'primeng/toast';
                     </div>
 
                     <div class="col-span-full lg:col-span-6">
-                        <div class="card">
+                        <div class="card border-2 border-solid">
                             <div class="font-semibold text-xl mb-4">Imagem</div>
                             <div class="flex flex-col gap-4 items-center justify-center">
-                                <p-fileupload #fu mode="basic" name="file[]" [multiple]="false" chooseLabel="Choose" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="10000000" (onSelect)="onUpload($event)" />
+                                <p-fileupload #fu mode="advanced" name="file[]" [showUploadButton]="false" [multiple]="false" chooseLabel="Choose" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onUpload($event)" />
                             </div>
                         </div>
                         <div class="font-semibold text-xl mb-4">Raça</div>
                         <div class="flex flex-col md:flex-row gap-4">
                             <div class="flex items-center">
-                                <p-radiobutton id="option1"  value="Nelore" [(ngModel)]="radioValue" formControlName="raca" />
+                                <p-radiobutton id="option1"  value="Nelore"  formControlName="raca" />
                                 <label for="option1" class="leading-none ml-2">Nelore</label>
                             </div>
                             <div class="flex items-center">
-                                <p-radiobutton id="option2"  value="Cruzado" [(ngModel)]="radioValue" formControlName="raca"/>
+                                <p-radiobutton id="option2"  value="Cruzado"  formControlName="raca"/>
                                 <label for="option2" class="leading-none ml-2">Cruzado</label>
                             </div>
                             <div class="flex items-center">
-                                <p-radiobutton id="option3"  value="Angus" [(ngModel)]="radioValue" formControlName="raca"/>
+                                <p-radiobutton id="option3"  value="Angus"  formControlName="raca"/>
                                 <label for="option3" class="leading-none ml-2">Angus</label>
                             </div>
                         </div>
@@ -107,18 +108,16 @@ import { ToastModule } from 'primeng/toast';
                     <div class="font-semibold text-xl mb-4">Sexo</div>
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex items-center">
-                            <p-radiobutton id="optionMacho" value="Macho" [(ngModel)]="radioValue" formControlName="sexo"/>
+                            <p-radiobutton id="optionMacho" value="Macho" formControlName="sexo"/>
                             <label for="optionMacho" class="leading-none ml-2">Macho</label>
                         </div>
                         <div class="flex items-center">
-                            <p-radiobutton id="optionFemea" value="Fêmea"  [(ngModel)]="radioValue" formControlName="sexo"/>
+                            <p-radiobutton id="optionFemea" value="Fêmea"  formControlName="sexo"/>
                             <label for="optionFemea" class="leading-none ml-2">Fêmea</label>
                         </div>
                     </div>
                     <div class="font-semibold text-xl">Tipo</div>
                     <p-select formControlName="tipo" [options]="dropdownValues" optionLabel="name" placeholder="Selecione" />
-
-                    <p-button (onClick)="verdados()">Salva</p-button>
                 </div>
 
             </div>
@@ -129,7 +128,23 @@ import { ToastModule } from 'primeng/toast';
                 <div class="card flex flex-col gap-4">
                     <div class="font-semibold text-xl">Data de nascimento</div>
                     <p-datepicker [showIcon]="true" [showButtonBar]="true" formControlName="data_nascimento"></p-datepicker>
+
+                    <p-inputgroup class="mb-1">
+                        <p-inputnumber placeholder="Preço" formControlName="preco"/>
+                        <p-inputgroup-addon>R$</p-inputgroup-addon>
+                        <p-inputgroup-addon>.00</p-inputgroup-addon>
+                    </p-inputgroup>
+
+                    <p-inputgroup>
+                        <p-inputnumber placeholder="Peso" formControlName="peso"/>
+                        <p-inputgroup-addon>Kg</p-inputgroup-addon>
+                        <p-inputgroup-addon>.00</p-inputgroup-addon>
+                    </p-inputgroup>
+
+                    <div class="font-semibold text-xl">Observações</div>
+                    <textarea pTextarea placeholder="Observações sobre o animal" [autoResize]="true" rows="3" cols="40" ></textarea>
                 </div>
+                <p-button (onClick)="saveAnimal()">Salva</p-button>
             </div>
         </p-fluid>
     </form>
@@ -139,7 +154,7 @@ import { ToastModule } from 'primeng/toast';
 <!--
 dsadsdadsd -->
 
-        <p-fluid class="flex flex-col md:flex-row gap-8">
+     <!--    <p-fluid class="flex flex-col md:flex-row gap-8">
             <div class="md:w-1/2">
                 <div class="card flex flex-col gap-4">
                     <div class="font-semibold text-xl">InputText</div>
@@ -310,8 +325,8 @@ dsadsdadsd -->
                     </p-inputgroup>
                 </div>
             </div>
-        </p-fluid>`,
-    providers: [CountryService, NodeService, MessageService]
+        </p-fluid> -->`,
+    providers: [CountryService, NodeService, MessageService, ProductService, ConfirmationService]
 })
 
 
@@ -410,7 +425,26 @@ export class InputDemo implements OnInit {
 
     formBuilderService = inject(FormBuilder);
 
-    constructor(private messageService: MessageService) { }
+
+    productDialog: boolean = false;
+
+
+    animais = signal<Animal[]>([]);
+
+
+    submitted: boolean = false;
+
+    private animal: Animal = {};
+
+
+
+
+        constructor(
+            private productService: ProductService,
+            private messageService: MessageService,
+            private confirmationService: ConfirmationService
+        ) {}
+
 
 
     ngOnInit() {
@@ -451,13 +485,54 @@ export class InputDemo implements OnInit {
 
     onUpload(event: any) {
 
-        const file = event.files[0];
-        this.form?.controls.file.setValue(file);
+        const file:File = event.files[0];
+
+        const arquivo = new File([file], 'teste.png', { type: file.type });
+
+        this.form?.controls.file.setValue(arquivo);
 
         this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
     }
 
     verdados(){
         console.log(this.form?.value)
+    }
+
+    saveAnimal() {
+        this.submitted = true;
+        const value = this.form?.value;
+
+        if (value?.nome_numero?.trim()) {
+                this.animal.id = this.createId();
+                this.animal.file = value.file;
+                this.animal.data_nascimento = value.data_nascimento;
+                this.animal.nome_numero = value.nome_numero;
+                this.animal.peso = value.peso;
+                this.animal.preco = value.preco;
+                this.animal.raca = value.raca;
+                this.animal.sexo = value.sexo;
+                this.animal.tipo = value.tipo;
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Adicionado',
+                    detail: 'Animal adicionado com sucesso',
+                    life: 3000
+                });
+                this.productService.addAnimal(this.animal);
+
+
+            this.productDialog = false;
+            this.animal = {};
+        }
+    }
+
+    createId(): string {
+        let id = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (var i = 0; i < 5; i++) {
+            id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
     }
 }

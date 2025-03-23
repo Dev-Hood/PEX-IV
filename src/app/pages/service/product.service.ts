@@ -6,6 +6,18 @@ interface InventoryStatus {
     value: string;
 }
 
+export interface Animal {
+    id?: string;
+    nome_numero?: string | null;
+    sexo?: string | null;
+    raca?: string | null;
+    tipo?: Object | null;         // dataNascimento: [new Date(), Validators.required],
+    file?: File | null;
+    data_nascimento?: Date | null;
+    peso?: number | null;
+    preco?:  number | null;
+}
+
 export interface Product {
     id?: string;
     code?: string;
@@ -21,6 +33,99 @@ export interface Product {
 
 @Injectable()
 export class ProductService {
+
+    getAnimalsData(): Animal [] {
+        return [
+            {
+                id: "1000",
+                nome_numero: "Bezerro 1",
+                sexo: "Macho",
+                raca: "Nelore",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2024-05-22'),
+                peso: 50,
+                preco: 1200
+            },
+            {
+                id: "1001",
+                nome_numero: "Bezerro 2",
+                sexo: "Femêa",
+                raca: "Nelore",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2025-02-01'),
+                peso: 50,
+                preco: 1200
+            },
+            {
+                id: "1002",
+                nome_numero: "Bezerro 3",
+                sexo: "Macho",
+                raca: "Nelore",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2025-01-21'),
+                peso: 50,
+                preco: 1200
+            },
+            {
+                id: "1003",
+                nome_numero: "Bezerro 14",
+                sexo: "Femêa",
+                raca: "Nelore",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2025-02-15'),
+                peso: 50,
+                preco: 1200
+            },
+            {
+                id: "1004",
+                nome_numero: "Bezerro 5",
+                sexo: "Macho",
+                raca: "Cruzado",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2024-02-24'),
+                peso: 50,
+                preco: 1200
+            },
+            {
+                id: "1005",
+                nome_numero: "Bezerro 6",
+                sexo: "Femêa",
+                raca: "Angus",
+                tipo: {
+                    code:"B",
+                    name: "Bezerro(a)"
+                },
+                file: undefined,
+                data_nascimento: new Date('2024-05-22'),
+                peso: 50,
+                preco: 1200
+            },
+        ];
+    }
+
+
+
+
     getProductsData() {
         return [
             {
@@ -1255,7 +1360,21 @@ export class ProductService {
         'Yoga Set'
     ];
 
-    constructor(private http: HttpClient) {}
+    private animalsKey = 'animals';
+
+    constructor(private http: HttpClient) {
+
+        if (!localStorage.getItem(this.animalsKey)) {
+            const defaultAnimals: Animal[] = this.getAnimalsData();
+            localStorage.setItem(this.animalsKey, JSON.stringify(defaultAnimals));
+        }
+
+    }
+
+    getAnimalsDataLocal(): Animal[] {
+        const animals = localStorage.getItem(this.animalsKey);
+        return animals ? JSON.parse(animals) : [];
+    }
 
     getProductsMini() {
         return Promise.resolve(this.getProductsData().slice(0, 5));
@@ -1267,6 +1386,16 @@ export class ProductService {
 
     getProducts() {
         return Promise.resolve(this.getProductsData());
+    }
+
+    getAnimais() {
+        return Promise.resolve(this.getAnimalsData());
+    }
+
+    addAnimal(newAnimal: Animal): void {
+        const animals = this.getAnimalsDataLocal();
+        animals.push(newAnimal);
+        localStorage.setItem(this.animalsKey, JSON.stringify(animals));  // Persiste no localStorage
     }
 
     getProductsWithOrdersSmall() {
@@ -1319,4 +1448,17 @@ export class ProductService {
     generateRating() {
         return Math.floor(Math.random() * Math.floor(5) + 1);
     }
+
+
+
+   /*  async carregarFile() {
+        let arquivo = undefined;
+        await this.carregarImagemParaFile('assets/img/capa.png','teste.png').then(
+            (data)=>{
+                arquivo = data
+            }
+        );
+
+        return arquivo;
+    } */
 }
