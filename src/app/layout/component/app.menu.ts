@@ -21,19 +21,21 @@ export class AppMenu {
     ngOnInit() {
         this.model = [
             {
-                label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+                label: 'Gestao',
+                items: [
+                    { label: 'Rebanho', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/dashboard'] }
+                ]
             },
             {
                 label: 'Animais da Fazenda',
                 items: [
-                    { label: 'Registrar', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/input'] },
+                    { label: 'Registrar', icon: 'pi pi-fw pi-id-card', routerLink: ['/rebanho'] },
                     {
                         label: 'Listar',
                         icon: 'pi pi-fw pi-list',
                         routerLink: ['/pages/crud']
-                    },
-
+                    }
                 ]
             },
             {

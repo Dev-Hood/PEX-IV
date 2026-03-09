@@ -1,0 +1,235 @@
+<p-toast />
+<p-confirmdialog [style]="{ width: '28rem' }" />
+
+<section class="herd-page">
+    <div class="herd-hero card">
+        <div>
+            <span class="herd-eyebrow">Gestao do Rebanho</span>
+            <h1>Cadastre, consulte e acompanhe os animais da fazenda em uma tela so.</h1>
+            <p>
+                O fluxo foi reorganizado para facilitar registro rapido, edicao e consulta. Em desenvolvimento o app usa
+                <strong>json-server</strong>; na Vercel, entra automaticamente no modo local para continuar operando.
+            </p>
+        </div>
+
+        <div class="herd-hero-actions">
+            <span class="source-pill" [class.source-pill--api]="dataSource() === 'json-server'">{{ getSourceLabel() }}</span>
+            <button pButton type="button" label="Novo cadastro" icon="pi pi-plus" (click)="resetForm()"></button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <article class="card stat-card stat-card--olive">
+            <span>Total no rebanho</span>
+            <strong>{{ stats().total }}</strong>
+            <small>Animais cadastrados e disponiveis para consulta.</small>
+        </article>
+        <article class="card stat-card stat-card--sand">
+            <span>Valor estimado</span>
+            <strong>{{ stats().valorTotal | currency: 'BRL' : 'symbol' : '1.0-0' : 'pt-BR' }}</strong>
+            <small>Soma do valor informado para os registros.</small>
+        </article>
+        <article class="card stat-card stat-card--sky">
+            <span>Femeas</span>
+            <strong>{{ stats().femeas }}</strong>
+            <small>Matrizes, bezerras e novilhas no cadastro.</small>
+        </article>
+        <article class="card stat-card stat-card--clay">
+            <span>Machos</span>
+            <strong>{{ stats().machos }}</strong>
+            <small>Bois, bezerros e garrotes registrados.</small>
+        </article>
+    </div>
+
+    <div class="management-grid">
+        <section class="card form-card">
+            <div class="section-header">
+                <div>
+                    <span class="section-kicker">{{ isEditing ? 'Edicao' : 'Cadastro' }}</span>
+                    <h2>{{ isEditing ? 'Atualizar animal' : 'Registrar novo animal' }}</h2>
+                </div>
+                <button
+                    *ngIf="isEditing"
+                    pButton
+                    type="button"
+                    label="Cancelar edicao"
+                    severity="secondary"
+                    [outlined]="true"
+                    (click)="resetForm()"
+                ></button>
+            </div>
+
+            <form [formGroup]="animalForm" class="animal-form" (ngSubmit)="submitForm()">
+                <div class="form-grid">
+                    <label>
+                        <span>Nome do animal</span>
+                        <input pInputText formControlName="nome" placeholder="Ex.: Estrela" />
+                    </label>
+
+                    <label>
+                        <span>Identificacao / brinco</span>
+                        <input pInputText formControlName="identificacao" placeholder="Ex.: VAC-014" />
+                    </label>
+
+                    <label>
+                        <span>Tipo</span>
+                        <p-select formControlName="tipo" [options]="animalTypeOptions" optionLabel="label" optionValue="value"></p-select>
+                    </label>
+
+                    <label>
+                        <span>Sexo</span>
+                        <p-select formControlName="sexo" [options]="animalSexOptions" optionLabel="label" optionValue="value"></p-select>
+                    </label>
+
+                    <label>
+                        <span>Raca</span>
+                        <p-select formControlName="raca" [options]="breedOptions" optionLabel="label" optionValue="value"></p-select>
+                    </label>
+
+                    <label>
+                        <span>Status</span>
+                        <p-select formControlName="status" [options]="animalStatusOptions" optionLabel="label" optionValue="value"></p-select>
+                    </label>
+
+                    <label>
+                        <span>Data de nascimento</span>
+                        <p-datepicker formControlName="dataNascimento" appendTo="body" [showIcon]="true" dateFormat="dd/mm/yy"></p-datepicker>
+                    </label>
+
+                    <label>
+                        <span>Peso (kg)</span>
+                        <p-inputnumber formControlName="peso" suffix=" kg" [min]="1"></p-inputnumber>
+                    </label>
+
+                    <label>
+                        <span>Valor estimado</span>
+                        <p-inputnumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR" [min]="1"></p-inputnumber>
+                    </label>
+
+                    <label class="form-grid-span-2">
+                        <span>Foto por URL</span>
+                        <input pInputText formControlName="fotoUrl" placeholder="Cole uma URL ou use o upload abaixo" />
+                    </label>
+
+                    <label class="form-grid-span-2">
+                        <span>Upload de imagem</span>
+                        <input type="file" accept="image/*" (change)="handleFileInput($event)" />
+                    </label>
+
+                    <label class="form-grid-span-2">
+                        <span>Observacoes</span>
+                        <textarea pTextarea formControlName="observacoes" rows="4" [autoResize]="true" placeholder="Historico, vacinas, alimentacao, observacoes clinicas..."></textarea>
+                    </label>
+                </div>
+
+                <div class="preview-box">
+                    <img [src]="animalForm.controls.fotoUrl.value || 'assets/img/bezerro-1.png'" [alt]="animalForm.controls.nome.value || 'Preview do animal'" />
+                    <div>
+                        <strong>{{ animalForm.controls.nome.value || 'Preview do cadastro' }}</strong>
+                        <p>{{ animalForm.controls.identificacao.value || 'Sem identificacao informada' }}</p>
+                    </div>
+                </div>
+
+                <p class="form-error" *ngIf="hasFormError">Preencha os campos obrigatorios antes de salvar.</p>
+
+                <div class="form-actions">
+                    <button pButton type="button" label="Limpar" severity="secondary" [outlined]="true" (click)="resetForm()"></button>
+                    <button
+                        pButton
+                        type="submit"
+                        [label]="saving() ? 'Salvando...' : isEditing ? 'Salvar alteracoes' : 'Registrar animal'"
+                        icon="pi pi-check"
+                        [disabled]="saving()"
+                    ></button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card list-card">
+            <div class="section-header">
+                <div>
+                    <span class="section-kicker">Consulta</span>
+                    <h2>Rebanho cadastrado</h2>
+                </div>
+                <span class="list-counter">{{ filteredAnimals().length }} resultados</span>
+            </div>
+
+            <div class="toolbar-grid">
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search"></p-inputicon>
+                    <input pInputText type="text" placeholder="Buscar por nome, raca, status..." (input)="updateSearchFromEvent($event)" />
+                </p-iconfield>
+
+                <p-select
+                    [options]="typeOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [ngModel]="selectedType()"
+                    (ngModelChange)="updateTypeFilter($event)"
+                ></p-select>
+            </div>
+
+            <p-table
+                [value]="filteredAnimals()"
+                [paginator]="true"
+                [rows]="6"
+                [rowHover]="true"
+                [loading]="loading()"
+                [rowsPerPageOptions]="[6, 12, 24]"
+                responsiveLayout="scroll"
+            >
+                <ng-template #header>
+                    <tr>
+                        <th>Animal</th>
+                        <th>Tipo</th>
+                        <th>Sexo</th>
+                        <th>Nascimento</th>
+                        <th>Peso</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template #body let-animal>
+                    <tr>
+                        <td>
+                            <div class="animal-cell">
+                                <img [src]="animal.fotoUrl" [alt]="animal.nome" />
+                                <div>
+                                    <strong>{{ animal.nome }}</strong>
+                                    <small>{{ animal.identificacao }} • {{ animal.raca }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ animal.tipo }}</td>
+                        <td>
+                            <p-tag [value]="animal.sexo" [severity]="getSexoSeverity(animal.sexo)"></p-tag>
+                        </td>
+                        <td>{{ animal.dataNascimento | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ animal.peso }} kg</td>
+                        <td>{{ animal.valor | currency: 'BRL' : 'symbol' : '1.0-0' : 'pt-BR' }}</td>
+                        <td>
+                            <p-tag [value]="animal.status" [severity]="getStatusSeverity(animal.status)"></p-tag>
+                        </td>
+                        <td class="actions-cell">
+                            <button pButton type="button" icon="pi pi-pencil" [text]="true" (click)="editAnimal(animal)"></button>
+                            <button pButton type="button" icon="pi pi-trash" severity="danger" [text]="true" (click)="confirmDelete(animal)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <strong>Nenhum animal encontrado.</strong>
+                                <p>Ajuste os filtros ou registre um novo animal no formulario ao lado.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </section>
+    </div>
+</section>

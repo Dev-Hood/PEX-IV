@@ -1,0 +1,64 @@
+{
+  "animals": [
+    {
+      "id": "a-1001",
+      "nome": "Estrela",
+      "identificacao": "VAC-014",
+      "tipo": "Vaca",
+      "sexo": "Femea",
+      "raca": "Nelore",
+      "peso": 482,
+      "valor": 8500,
+      "dataNascimento": "2021-08-18",
+      "status": "Prenha",
+      "observacoes": "Matriz com bom historico de reproducao.",
+      "fotoUrl": "assets/img/bezerro-2.png",
+      "createdAt": "2026-03-09T10:00:00.000Z"
+    },
+    {
+      "id": "a-1002",
+      "nome": "Trovao",
+      "identificacao": "BOI-022",
+      "tipo": "Boi",
+      "sexo": "Macho",
+      "raca": "Angus",
+      "peso": 610,
+      "valor": 11200,
+      "dataNascimento": "2020-11-05",
+      "status": "Saudavel",
+      "observacoes": "Animal pronto para negociacao no proximo lote.",
+      "fotoUrl": "assets/img/bezerro-1.png",
+      "createdAt": "2026-03-09T10:00:00.000Z"
+    },
+    {
+      "id": "a-1003",
+      "nome": "Aurora",
+      "identificacao": "BEZ-031",
+      "tipo": "Bezerra",
+      "sexo": "Femea",
+      "raca": "Cruzado",
+      "peso": 128,
+      "valor": 3200,
+      "dataNascimento": "2025-12-12",
+      "status": "Em observacao",
+      "observacoes": "Acompanhamento nutricional semanal.",
+      "fotoUrl": "assets/img/bezerro-2.png",
+      "createdAt": "2026-03-09T10:00:00.000Z"
+    },
+    {
+      "id": "a-1004",
+      "nome": "Brutus",
+      "identificacao": "GAR-009",
+      "tipo": "Garrote",
+      "sexo": "Macho",
+      "raca": "Nelore",
+      "peso": 295,
+      "valor": 5400,
+      "dataNascimento": "2024-06-02",
+      "status": "Saudavel",
+      "observacoes": "Boa evolucao de ganho de peso.",
+      "fotoUrl": "assets/img/bezerro-1.png",
+      "createdAt": "2026-03-09T10:00:00.000Z"
+    }
+  ]
+}

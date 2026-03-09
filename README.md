@@ -1,59 +1,53 @@
-# Sakai19
+# PEX 2
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+Sistema web academico para cadastro e acompanhamento de rebanho. A interface principal foi reorganizada para funcionar como uma central unica de registro e consulta de vacas, bois, bezerros, bezerras, novilhas e garrotes.
 
-## Development server
+## Fluxo atual
 
-To start a local development server, run:
+- Cadastro e listagem na mesma tela.
+- Uso de `json-server` em `http://localhost:3000/animals` quando a aplicacao roda localmente.
+- Fallback automatico para `localStorage` quando a API nao estiver disponivel.
+- Funcionamento preservado na Vercel por meio desse fallback local no navegador.
 
-```bash
-ng serve
-```
+## Executar localmente
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Instale as dependencias:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Suba o frontend:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
-
-To build the project run:
+Suba o `json-server` em outro terminal:
 
 ```bash
-ng build
+npm run api
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Frontend: `http://localhost:4200`
 
-## Running unit tests
+API mock: `http://localhost:3000/animals`
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Dados iniciais
+
+Os dados iniciais do `json-server` ficam em `db.json`.
+
+## Build
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+## Vercel
 
-For end-to-end (e2e) testing, run:
+`json-server` nao roda dentro do deploy estatico da Vercel. Por isso, esta implementacao usa:
 
-```bash
-ng e2e
-```
+- `json-server` para desenvolvimento local
+- `localStorage` como fallback automatico em producao
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Se voce quiser consumir uma API externa em producao, exponha `window.__PEX_API_URL__` apontando para um backend compativel com os endpoints do `json-server`.
